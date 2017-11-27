@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boya.platform.forum.mapper.ForumIntegrationMapper">
+  <resultMap id="BaseResultMap" type="com.boya.platform.forum.model.po.ForumIntegration">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="integration_id" jdbcType="BIGINT" property="integrationId" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="integration_num" jdbcType="INTEGER" property="integrationNum" />
+    <result column="start_checkin_num" jdbcType="INTEGER" property="startCheckinNum" />
+    <result column="end_checkin_num" jdbcType="INTEGER" property="endCheckinNum" />
+  </resultMap>
+
+  <!-- 根据签到次数区间获取此次签到的积分-->
+  <select id="getIntegrationByCheckinTimes" resultType="java.lang.Integer">
+    select i.integration_num
+    from forum_integration i
+    where #{checkinTimes} BETWEEN i.start_checkin_num and i.end_checkin_num
+  </select>
+</mapper>

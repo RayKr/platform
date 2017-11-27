@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>forum</artifactId>
+	<artifactId>marineonline</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>forum</name>
-	<description>boyaforum</description>
+	<name>marineonline</name>
+	<description>marine online web</description>
 
 	<parent>
 		<groupId>com.boya.platform</groupId>
@@ -80,5 +80,6 @@
 			</plugin>
 		</plugins>
 	</build>
+
 
 </project>

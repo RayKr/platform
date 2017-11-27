@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boya.platform.forum.mapper.ForumNoticeMapper">
+  <resultMap id="BaseResultMap" type="com.boya.platform.forum.model.po.ForumNotice">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="notice_id" jdbcType="BIGINT" property="noticeId" />
+    <result column="notice_date" jdbcType="TIMESTAMP" property="noticeDate" />
+    <result column="notice_type" jdbcType="TINYINT" property="noticeType" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="follower_id" jdbcType="BIGINT" property="followerId" />
+    <result column="post_id" jdbcType="BIGINT" property="postId" />
+    <result column="comment_id" jdbcType="BIGINT" property="commentId" />
+    <result column="favor_id" jdbcType="BIGINT" property="favorId" />
+    <result column="notice_status" jdbcType="TINYINT" property="noticeStatus" />
+  </resultMap>
+
+  <resultMap id="ExtendResultMap" type="com.boya.platform.forum.model.po.ForumNoticeExtend">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="notice_id" jdbcType="BIGINT" property="noticeId" />
+    <result column="notice_date" jdbcType="TIMESTAMP" property="noticeDate" />
+    <result column="notice_type" jdbcType="TINYINT" property="noticeType" />
+    <result column="post_id" jdbcType="BIGINT" property="postId" />
+    <result column="comment_id" jdbcType="BIGINT" property="commentId" />
+    <result column="oper_id" jdbcType="BIGINT" property="operId" />
+    <result column="oper_portrait" jdbcType="BIGINT" property="operPortrait" />
+    <result column="oper_name" jdbcType="VARCHAR" property="operName" />
+    <result column="post_title" jdbcType="LONGVARCHAR" property="postTitle" />
+    <result column="comment_content" jdbcType="LONGVARCHAR" property="commentContent" />
+  </resultMap>
+
+  <select id="selectByUserId" resultMap="ExtendResultMap">
+    # 关注通知
+    select n.notice_id, n.notice_date, n.notice_type, n.post_id, n.comment_id, u.user_id oper_id, u.display_name oper_name, u.portrait oper_portrait, null post_title, null comment_content
+    from forum_notice n, forum_user u
+    where n.follower_id = u.user_id and n.notice_type = 1 and n.notice_status = 0 and n.user_id = #{userId}
+
+    union all
+
+    # 点赞通知
+    select n.notice_id, n.notice_date, n.notice_type, n.post_id, n.comment_id, f.user_id oper_id, u.display_name oper_name, u.portrait oper_portrait, p.post_title, null comment_content
+    from forum_notice n, forum_post p, forum_favorite f, forum_user u
+    where n.post_id = p.post_id and n.favor_id = f.id and f.relate_type = 'LIKE' and u.user_id = f.user_id and n.notice_type = 2 and n.notice_status = 0 and n.user_id = #{userId}
+
+    union all
+
+    # 评论通知
+    select n.notice_id, n.notice_date, n.notice_type, n.post_id, n.comment_id, u.user_id oper_id, u.display_name oper_name, u.portrait oper_portrait, p.post_title,  t.comment_content
+    from forum_notice n, forum_post p, forum_comment t, forum_user u
+    where n.post_id = p.post_id and n.comment_id = t.comment_id and t.comment_user_id = u.user_id and n.notice_type = 3 and n.notice_status = 0 and n.user_id = #{userId}
+
+    order by notice_date desc
+  </select>
+
+</mapper>

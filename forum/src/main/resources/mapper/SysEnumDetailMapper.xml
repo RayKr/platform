@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boya.platform.forum.mapper.SysEnumDetailMapper">
+  <resultMap id="BaseResultMap" type="com.boya.platform.forum.model.po.SysEnumDetail">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="enum_type" jdbcType="VARCHAR" property="enumType" />
+    <result column="enum_value" jdbcType="TINYINT" property="enumValue" />
+    <result column="enum_name" jdbcType="VARCHAR" property="enumName" />
+    <result column="enum_desc" jdbcType="VARCHAR" property="enumDesc" />
+  </resultMap>
+
+  <select id="selectByType" resultMap="BaseResultMap">
+    SELECT * FROM sys_enum_detail WHERE enum_type = #{type}
+  </select>
+</mapper>

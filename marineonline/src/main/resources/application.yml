@@ -1,15 +1,14 @@
 # Server settings
 server:
-    port: 8089
-    address: 127.0.0.1
+    port: 8090
 
 # spring
 spring:
     datasource:
         name: dataSource
-        url: jdbc:mysql://localhost:3306/forum?serverTimezone=Asia/Shanghai&useSSL=false
+        url: jdbc:mysql://localhost:3306/boya_platform?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&autoReconnect=true&useSSL=false
         username: root
-        password: marine
+        password: 123456
         driver-class-name: com.mysql.cj.jdbc.Driver
         type: com.alibaba.druid.pool.DruidDataSource
         druid:
@@ -37,7 +36,7 @@ spring:
 # mybatis
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.boya.platform.forum.model.po
+  type-aliases-package: com.boya.platform.marineonline.model.po
 
 # mapper
 mapper:

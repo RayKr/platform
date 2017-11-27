@@ -1,21 +1,16 @@
-package com.boya.platform.forum;
+package com.boya.platform.marineonline;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-/**
- * 论坛子项目入口，启用注册发现
- * @author Tsunglei Ching
- * @date 2017-11-27
- */
 @SpringBootApplication
 @EnableDiscoveryClient
-@MapperScan(basePackages = "com.boya.platform.forum.mapper")
-public class ForumApplication {
+@MapperScan(basePackages = "com.boya.platform.marineonline.mapper")
+public class MarineonlineApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ForumApplication.class, args);
+		SpringApplication.run(MarineonlineApplication.class, args);
 	}
 }

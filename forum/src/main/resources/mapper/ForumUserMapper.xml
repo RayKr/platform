@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boya.platform.forum.mapper.ForumUserMapper">
+  <resultMap id="BaseResultMap" type="com.boya.platform.forum.model.po.ForumUser">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="login_name" jdbcType="VARCHAR" property="loginName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="portrait" jdbcType="VARCHAR" property="portrait" />
+    <result column="integration" jdbcType="INTEGER" property="integration" />
+    <result column="signature" jdbcType="VARCHAR" property="signature" />
+    <result column="user_type" jdbcType="TINYINT" property="userType" />
+    <result column="trade" jdbcType="TINYINT" property="trade" />
+    <result column="personal_name" jdbcType="VARCHAR" property="personalName" />
+    <result column="personal_phone" jdbcType="VARCHAR" property="personalPhone" />
+    <result column="personal_sex" jdbcType="TINYINT" property="personalSex" />
+    <result column="personal_mail" jdbcType="VARCHAR" property="personalMail" />
+    <result column="personal_company_name" jdbcType="VARCHAR" property="personalCompanyName" />
+    <result column="personal_post" jdbcType="VARCHAR" property="personalPost" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="company_address" jdbcType="VARCHAR" property="companyAddress" />
+    <result column="company_phone" jdbcType="VARCHAR" property="companyPhone" />
+    <result column="company_mail" jdbcType="VARCHAR" property="companyMail" />
+    <result column="contacts_name" jdbcType="VARCHAR" property="contactsName" />
+    <result column="contacts_phone" jdbcType="VARCHAR" property="contactsPhone" />
+    <result column="contacts_mail" jdbcType="VARCHAR" property="contactsMail" />
+    <result column="contacts_post" jdbcType="VARCHAR" property="contactsPost" />
+    <result column="display_name" jdbcType="VARCHAR" property="displayName" />
+  </resultMap>
+
+  <resultMap id="ResultMapDTO" type="com.boya.platform.forum.model.dto.UserDTO">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="user_id" jdbcType="BIGINT" property="user_id" />
+    <result column="portrait" jdbcType="VARCHAR" property="portrait" />
+    <result column="display_name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+
+  <!-- 定义列字段，可重用，尽量避免直接使用 select * -->
+  <sql id="userColumns">  </sql>
+
+  <select id="getIdByLoginName" resultType="java.lang.Long">
+    select user_id
+    from forum_user WHERE login_name = #{loginName};
+  </select>
+
+  <!-- 获取关注人的ids -->
+  <select id="getFollowingIds" resultType="java.lang.Long">
+    select r.user_id
+    from forum_user u, forum_user_relationship r
+    where u.user_id = r.follower_id and r.user_id = #{userId}
+  </select>
+
+  <!-- 获取粉丝的ids -->
+  <select id="getFollowerIds" resultType="java.lang.Long">
+    select r.follower_id
+    from forum_user u, forum_user_relationship r
+    where u.user_id = r.user_id and u.user_id = #{userId}
+  </select>
+
+  <!-- 获取关注的用户列表 -->
+  <select id="selectFollowingUsers" resultMap="ResultMapDTO">
+    select u.user_id, u.portrait, u.display_name
+    from forum_user u, forum_user_relationship r
+    where u.user_id = r.user_id and r.follower_id = #{userId}
+  </select>
+
+  <!-- 获取粉丝列表 -->
+  <select id="selectFollowerUsers" resultMap="ResultMapDTO">
+    select u.user_id, u.portrait, u.display_name
+    from forum_user u, forum_user_relationship r
+    where u.user_id = r.follower_id and r.user_id = #{userId}
+  </select>
+
+  <!-- 修改个性签名 -->
+  <update id="updateSignature" keyColumn="user_id" keyProperty="userId" useGeneratedKeys="true">
+    UPDATE forum_user
+    SET signature = #{signature}, gmt_modified = NOW()
+    WHERE user_id = #{userId}
+  </update>
+
+  <!-- 修改头像 -->
+  <update id="updatePortrait" keyColumn="user_id" keyProperty="userId" useGeneratedKeys="true">
+    UPDATE forum_user
+    SET portrait = #{portrait}, gmt_modified = NOW()
+    WHERE user_id = #{userId}
+  </update>
+
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boya.platform.marineonline.mapper.LspDocumentFileInfoMapper">
+  <resultMap id="BaseResultMap" type="com.boya.platform.marineonline.model.po.LspDocumentFileInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="ID" jdbcType="INTEGER" property="id" />
+    <result column="DOCUMENT_MAIN_ID" jdbcType="INTEGER" property="documentMainId" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="URL" jdbcType="VARCHAR" property="url" />
+    <result column="SERVER_NAME" jdbcType="VARCHAR" property="serverName" />
+    <result column="SORT" jdbcType="INTEGER" property="sort" />
+    <result column="CREATE_USER" jdbcType="VARCHAR" property="createUser" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+  </resultMap>
+
+  <!-- 获取头像信息表记录 -->
+  <select id="selectUrlByDocId" resultType="java.lang.String">
+    SELECT url FROM lsp_document_file_info WHERE DOCUMENT_MAIN_ID = #{docId} LIMIT 1
+  </select>
+
+  <update id="updateUrlByDocId" keyColumn="id">
+    UPDATE lsp_document_file_info SET url = #{portrait} WHERE DOCUMENT_MAIN_ID = #{docId}
+  </update>
+</mapper>

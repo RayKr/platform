@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boya.platform.forum.mapper.ForumCheckinMapper">
+  <resultMap id="BaseResultMap" type="com.boya.platform.forum.model.po.ForumCheckin">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="checkin_id" jdbcType="BIGINT" property="checkinId" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="checkin_date" jdbcType="DATE" property="checkinDate" />
+    <result column="series_times" jdbcType="INTEGER" property="seriesTimes" />
+    <result column="checkin_integration" jdbcType="INTEGER" property="checkinIntegration" />
+  </resultMap>
+
+  <!-- 获取上次签到的信息 -->
+  <select id="selectLastCheckByUserId" resultMap="BaseResultMap">
+    select c.checkin_id, c.user_id, c.checkin_date, c.series_times, c.checkin_integration
+    from forum_checkin c
+    where c.user_id = #{userId}
+    ORDER BY c.checkin_date DESC
+    LIMIT 1
+  </select>
+
+</mapper>

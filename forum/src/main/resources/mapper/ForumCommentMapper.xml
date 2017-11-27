@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boya.platform.forum.mapper.ForumCommentMapper">
+  <resultMap id="BaseResultMap" type="com.boya.platform.forum.model.po.ForumComment">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="comment_id" jdbcType="BIGINT" property="commentId" />
+    <result column="comment_post_id" jdbcType="BIGINT" property="commentPostId" />
+    <result column="comment_user_id" jdbcType="BIGINT" property="commentUserId" />
+    <result column="comment_ip" jdbcType="VARCHAR" property="commentIp" />
+    <result column="comment_date" jdbcType="DATE" property="commentDate" />
+    <result column="comment_date_gmt" jdbcType="TIMESTAMP" property="commentDateGmt" />
+    <result column="comment_approved" jdbcType="VARCHAR" property="commentApproved" />
+    <result column="comment_agent" jdbcType="VARCHAR" property="commentAgent" />
+    <result column="comment_parent" jdbcType="BIGINT" property="commentParent" />
+    <result column="comment_content" jdbcType="LONGVARCHAR" property="commentContent" />
+  </resultMap>
+
+  <resultMap id="ResultMapDTO" type="com.boya.platform.forum.model.dto.CommentDTO">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="comment_id" jdbcType="BIGINT" property="comment_id" />
+    <result column="comment_post_id" jdbcType="BIGINT" property="comment_post_id" />
+    <result column="post_title" jdbcType="LONGVARCHAR" property="comment_post_title" />
+    <result column="comment_user_id" jdbcType="BIGINT" property="comment_user_id" />
+    <result column="user_name" jdbcType="VARCHAR" property="comment_user_name" />
+    <result column="portrait" jdbcType="VARCHAR" property="comment_user_portrait" />
+    <result column="comment_date" jdbcType="DATE" property="comment_date" />
+    <result column="comment_parent" jdbcType="BIGINT" property="comment_parent" />
+    <result column="comment_content" jdbcType="LONGVARCHAR" property="comment_content" />
+  </resultMap>
+
+  <sql id="commentColumns">
+    c.comment_id, c.comment_post_id, c.comment_user_id, c.comment_date, c.comment_parent, c.comment_content
+  </sql>
+
+  <sql id="userColumns">
+    u.display_name user_name, u.portrait
+  </sql>
+
+  <select id="selectByUserId" resultMap="ResultMapDTO">
+    SELECT <include refid="commentColumns"/> , p.post_title
+    FROM forum_comment c, forum_post p
+    WHERE c.comment_post_id = p.post_id AND c.comment_user_id = #{userId} AND c.comment_approved = 1
+    ORDER BY c.comment_post_id, c.comment_id DESC
+  </select>
+
+  <select id="selectByPostId" resultMap="ResultMapDTO">
+    SELECT <include refid="commentColumns"/> , <include refid="userColumns"/>
+    FROM forum_comment c, forum_user u
+    WHERE c.comment_user_id = u.user_id AND c.comment_post_id = #{postId} AND c.comment_approved = 1
+    ORDER BY c.comment_id
+  </select>
+
+
+</mapper>

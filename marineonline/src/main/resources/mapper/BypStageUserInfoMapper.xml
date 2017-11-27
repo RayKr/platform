@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boya.platform.marineonline.mapper.BypStageUserInfoMapper">
+  <resultMap id="BaseResultMap" type="com.boya.platform.marineonline.model.po.BypStageUserInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="login_name" jdbcType="VARCHAR" property="loginName" />
+    <result column="login_phone" jdbcType="VARCHAR" property="loginPhone" />
+    <result column="login_mail" jdbcType="VARCHAR" property="loginMail" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="user_type" jdbcType="CHAR" property="userType" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="status_content" jdbcType="VARCHAR" property="statusContent" />
+    <result column="use_status" jdbcType="CHAR" property="useStatus" />
+    <result column="valid_flag" jdbcType="CHAR" property="validFlag" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_user_id" jdbcType="INTEGER" property="updateUserId" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+
+</mapper>

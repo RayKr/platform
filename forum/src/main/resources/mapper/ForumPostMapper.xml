@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boya.platform.forum.mapper.ForumPostMapper">
+      <resultMap id="BaseResultMap" type="com.boya.platform.forum.model.po.ForumPost">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="post_id" jdbcType="BIGINT" property="postId" />
+        <result column="post_author_id" jdbcType="BIGINT" property="postAuthorId" />
+        <result column="post_date" jdbcType="TIMESTAMP" property="postDate" />
+        <result column="post_date_gmt" jdbcType="TIMESTAMP" property="postDateGmt" />
+        <result column="post_name" jdbcType="VARCHAR" property="postName" />
+        <result column="post_status" jdbcType="TINYINT" property="postStatus" />
+        <result column="post_password" jdbcType="VARCHAR" property="postPassword" />
+        <result column="post_modified" jdbcType="TIMESTAMP" property="postModified" />
+        <result column="post_modified_gmt" jdbcType="TIMESTAMP" property="postModifiedGmt" />
+        <result column="post_mime_type" jdbcType="VARCHAR" property="postMimeType" />
+        <result column="comment_status" jdbcType="TINYINT" property="commentStatus" />
+        <result column="read_count" jdbcType="BIGINT" property="readCount" />
+        <result column="is_sticky" jdbcType="BIT" property="isSticky" />
+        <result column="is_official" jdbcType="BIT" property="isOfficial" />
+        <result column="is_top" jdbcType="BIT" property="isTop" />
+        <result column="post_content" jdbcType="LONGVARCHAR" property="postContent" />
+        <result column="post_title" jdbcType="LONGVARCHAR" property="postTitle" />
+        <result column="post_excerpt" jdbcType="LONGVARCHAR" property="postExcerpt" />
+      </resultMap>
+
+    <resultMap id="ResultMapDTO" type="com.boya.platform.forum.model.dto.PostDTO">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="post_id" jdbcType="BIGINT" property="post_id"/>
+        <result column="post_author_id" jdbcType="BIGINT" property="post_author_id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="post_author_name"/>
+        <result column="portrait" jdbcType="VARCHAR" property="post_author_portrait"/>
+        <result column="post_date" jdbcType="TIMESTAMP" property="post_date"/>
+        <result column="comment_count" jdbcType="BIGINT" property="comment_count"/>
+        <result column="like_count" jdbcType="BIGINT" property="like_count"/>
+        <result column="read_count" jdbcType="BIGINT" property="read_count"/>
+        <result column="post_content" jdbcType="LONGVARCHAR" property="post_content"/>
+        <result column="post_title" jdbcType="LONGVARCHAR" property="post_title"/>
+        <result column="post_excerpt" jdbcType="LONGVARCHAR" property="post_excerpt"/>
+        <result column="is_sticky" jdbcType="BIT" property="is_sticky"/>
+        <result column="is_official" jdbcType="BIT" property="is_official"/>
+        <result column="is_top" jdbcType="BIT" property="is_top"/>
+        <result column="is_followed" jdbcType="BIT" property="is_followed"/>
+    </resultMap>
+
+    <sql id="postColumns">
+        post_id, post_author_id, post_date, post_title, post_content, post_excerpt, read_count,
+        (select COUNT(0) from forum_comment t where t.comment_post_id = post_id) comment_count,
+        (select COUNT(0) from forum_favorite f where f.post_id = p.post_id and f.relate_type = 'LIKE') like_count,
+        is_sticky, is_official, is_top
+    </sql>
+
+    <sql id="userColumns">
+        u.display_name user_name, u.portrait
+    </sql>
+
+    <!-- 获取该用户的所有帖子列表 -->
+    <select id="selectByUserId" resultMap="ResultMapDTO">
+        SELECT
+        <include refid="postColumns" />
+        FROM forum_post p
+        WHERE p.post_author_id = #{userId} AND p.post_status = 1
+        order by p.post_id DESC
+    </select>
+
+    <!-- 获取文章详细内容 -->
+    <select id="selectByPostId" resultMap="ResultMapDTO">
+        SELECT
+        <include refid="postColumns" />
+        ,
+        <include refid="userColumns" />
+        ,
+        (select 1 from forum_user_relationship r where r.user_id = p.post_author_id and r.follower_id =
+        <if test="userId != null and userId != ''">
+            #{userId}
+        </if>
+        <if test="userId == null or userId == ''">
+            null
+        </if>
+        ) is_followed
+        FROM forum_post p, forum_user u
+        WHERE p.post_author_id = u.user_id AND post_id = #{postId} AND post_status = 1
+        order by post_id DESC
+    </select>
+
+    <!-- 获取所有帖子列表（除官方） -->
+    <select id="selectAllPosts" resultMap="ResultMapDTO">
+        SELECT
+        <include refid="postColumns" />
+        ,
+        <include refid="userColumns" />
+        ,
+        (case when (select MAX(t.comment_date) from forum_comment t where t.comment_post_id = p.post_id) > p.post_date
+        then (select MAX(t.comment_date) from forum_comment t where t.comment_post_id = p.post_id)
+        else p.post_date end) latest_date
+        FROM forum_post p, forum_user u
+        WHERE p.post_author_id = u.user_id AND post_status = 1 AND p.is_official = 0
+        ORDER BY p.is_top DESC, latest_date DESC, p.is_sticky DESC, p.is_official DESC, post_id DESC
+    </select>
+
+    <!-- 获取所有官方帖子 -->
+    <select id="selectAllOfficialPosts" resultMap="ResultMapDTO">
+        SELECT
+        <include refid="postColumns" />
+        ,
+        <include refid="userColumns" />
+        ,
+        (case when (select MAX(t.comment_date) from forum_comment t where t.comment_post_id = p.post_id) > p.post_date
+        then (select MAX(t.comment_date) from forum_comment t where t.comment_post_id = p.post_id)
+        else p.post_date end) latest_date
+        FROM forum_post p, forum_user u
+        WHERE p.post_author_id = u.user_id AND p.post_status = 1 AND p.is_official = 1
+        ORDER BY p.is_top DESC, p.post_date DESC, p.is_sticky DESC, p.is_official DESC, post_id DESC
+    </select>
+
+    <!-- 获取该用户所关注的用户的帖子列表 -->
+    <select id="selectFollowingPosts" resultMap="ResultMapDTO">
+        SELECT
+        <include refid="postColumns" />
+        ,
+        <include refid="userColumns" />
+        FROM forum_post p, forum_user u, forum_user_relationship r
+        WHERE p.post_author_id = u.user_id AND u.user_id = r.user_id AND post_status = 1 AND r.follower_id = #{userId}
+        ORDER BY p.is_top DESC, p.is_sticky DESC, p.is_official DESC, post_id DESC
+    </select>
+
+    <!-- 发帖 -->
+    <insert id="insertPost" keyColumn="post_id" keyProperty="postId" useGeneratedKeys="true">
+        INSERT INTO forum_post (post_title, post_content, post_excerpt, post_author_id, post_date, post_date_gmt)
+                VALUES (#{post.postTitle},#{post.postContent},#{post.postExcerpt},#{post.postAuthorId},NOW(),NOW())
+    </insert>
+
+    <!-- 搜索帖子 -->
+    <select id="selectByKeyWords" resultMap="ResultMapDTO">
+        SELECT
+        <include refid="postColumns" />
+        ,
+        <include refid="userColumns" />
+        FROM forum_post p, forum_user u
+        WHERE p.post_author_id = u.user_id AND p.post_status = 1 AND p.post_title LIKE CONCAT('%',#{keywords},'%')
+        ORDER BY p.is_top DESC, p.is_sticky DESC, p.is_official DESC, post_id DESC
+    </select>
+
+</mapper>
