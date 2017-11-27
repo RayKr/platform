@@ -17,6 +17,7 @@
 		<module>config-microservice</module>
 		<module>config-client</module>
 		<module>eureka-consumer</module>
+		<module>hystrix-dashboard</module>
 	</modules>
 
 	<parent>
@@ -95,6 +96,11 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-hystrix</artifactId>
+		</dependency>
+		<!-- Hystrix Dashboard -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
 		</dependency>
 
 
